@@ -468,6 +468,15 @@
                     // 创建SVG
                     let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${img.width * scale}" height="${img.height * scale}" viewBox="0 0 ${img.width} ${img.height}">\n`;
 
+                    function rgbToHex(r, g, b) {
+                    // 确保输入为整数 (0-255)
+                    const toHex = (value) => {
+                    const hex = Math.max(0, Math.min(255, value)).toString(16);
+                    return hex.length === 1 ? '0' + hex : hex; // 补零
+                    };
+                    return '#' + toHex(r) + toHex(g) + toHex(b);
+                }
+
                     // 遍历所有像素
                     for (let y = 0; y < img.height; y++) {
                         for (let x = 0; x < img.width; x++) {
@@ -480,8 +489,10 @@
                             // 如果像素是透明的，跳过
                             if (a === 0) continue;
 
+                            const rgbhex = rgbToHex(r,g,b)
+
                             // 创建矩形元素
-                            svg += `  <rect x="${x}" y="${y}" width="1" height="1" fill="rgba(${r},${g},${b},${a})" />\n`;
+                            svg += `  <rect x="${x}" y="${y}" width="1" height="1" style="fill:${rgbhex};fill-opacity:${a}" />\n`;
                         }
                     }
 
