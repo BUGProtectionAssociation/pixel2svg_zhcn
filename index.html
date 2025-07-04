@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            animation: yellow-orange 1s infinite alternate;
+            animation-duration: 3s;
+        }
+
+        @keyframes yellow-orange {
+            0% {
+                background: #1a2a6c;
+            }
+
+            25% {
+                background: #b21f75;
+            }
+
+            50% {
+                background: #4e10a0;
+            }
+
+            75% {
+                background: #156f85;
+            }
+
+            100% {
+                background: #1a2a6c;
+            }
         }
 
         .container {
@@ -70,7 +95,8 @@
             }
         }
 
-        .input-section, .output-section {
+        .input-section,
+        .output-section {
             background: rgba(10, 25, 60, 0.7);
             border-radius: 10px;
             padding: 25px;
@@ -101,7 +127,9 @@
             color: #90caf9;
         }
 
-        input[type="text"], input[type="range"], input[type="number"] {
+        input[type="text"],
+        input[type="range"],
+        input[type="number"] {
             width: 100%;
             padding: 12px 15px;
             border-radius: 8px;
@@ -112,7 +140,8 @@
             transition: all 0.3s ease;
         }
 
-        input[type="text"]:focus, input[type="number"]:focus {
+        input[type="text"]:focus,
+        input[type="number"]:focus {
             border-color: #e91e63;
             outline: none;
             box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
@@ -279,6 +308,95 @@
             line-height: 1.6;
         }
 
+        .crosshair-container {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            cursor: move;
+        }
+
+        .crosshair {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .horizontal-line,
+        .vertical-line {
+            position: absolute;
+            background-color: #ff3366;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+        }
+
+        .horizontal-line {
+            width: 100px;
+            height: 4px;
+            top: 50%;
+            left: -30px;
+            transform: translateY(-50%);
+        }
+
+        .vertical-line {
+            width: 4px;
+            height: 100px;
+            left: 50%;
+            top: -30px;
+            transform: translateX(-50%);
+        }
+
+        .center-point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid #ff3366;
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.8);
+        }
+
+        .control-panel {
+            background: rgba(30, 30, 46, 0.7);
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .color-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .color-btn.active {
+            transform: scale(1.2);
+            border-color: white;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
         footer {
             text-align: center;
             margin-top: 40px;
@@ -289,12 +407,21 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>图片像素转SVG工具</h1>
             <p class="subtitle">将任何图像转换为由彩色矩形组成的SVG矢量图像。每个矩形代表原图像中的一个像素，保留原始颜色信息。</p>
         </header>
+
+        <div class="crosshair-container">
+            <div class="crosshair">
+                <div class="horizontal-line"></div>
+                <div class="vertical-line"></div>
+                <div class="center-point"></div>
+            </div>
+        </div>
 
         <div class="main-content">
             <div class="input-section">
@@ -316,13 +443,16 @@
                 <button id="processBtn">转换图片为SVG</button>
 
                 <div class="example-images">
-                    <div class="example-image" data-url="https://img.icons8.com/?size=100&id=Df1e-VtkEzSF&format=png&color=000000">
+                    <div class="example-image"
+                        data-url="https://img.icons8.com/?size=100&id=Df1e-VtkEzSF&format=png&color=000000">
                         <img src="https://img.icons8.com/?size=100&id=Df1e-VtkEzSF&format=png&color=000000" alt="示例图片1">
                     </div>
-                    <div class="example-image" data-url="https://img.icons8.com/?size=100&id=SMD8PzZeIivy&format=png&color=000000">
+                    <div class="example-image"
+                        data-url="https://img.icons8.com/?size=100&id=SMD8PzZeIivy&format=png&color=000000">
                         <img src="https://img.icons8.com/?size=100&id=SMD8PzZeIivy&format=png&color=000000" alt="示例图片2">
                     </div>
-                    <div class="example-image" data-url="https://img.icons8.com/?size=100&id=gLCc850DIXDn&format=png&color=000000">
+                    <div class="example-image"
+                        data-url="https://img.icons8.com/?size=100&id=gLCc850DIXDn&format=png&color=000000">
                         <img src="https://img.icons8.com/?size=100&id=gLCc850DIXDn&format=png&color=000000" alt="示例图片3">
                     </div>
                 </div>
@@ -363,13 +493,418 @@
             </div>
         </div>
 
+        <div class="control-panel">
+            <div class="position-info">
+                当前位置: (<span id="posX">0</span>, <span id="posY">0</span>)
+            </div>
+
+            <div class="color-selector">
+                <div class="color-btn active" data-color="#ff3366" style="background-color: #ff3366;"></div>
+                <div class="color-btn" data-color="#00ffaa" style="background-color: #00ffaa;"></div>
+                <div class="color-btn" data-color="#ffcc00" style="background-color: #f7ff85;"></div>
+                <div class="color-btn" data-color="#3366ff" style="background-color: #3366ff;"></div>
+            </div>
+
+            <button class="reset-btn">重置位置</button>
+        </div>
+
         <footer>
             <p>© 2025 图片像素转SVG工具 | 基于HTML5 Canvas与SVG技术</p>
         </footer>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const crosshairContainer = document.querySelector('.crosshair-container');
+            const horizontalLine = document.querySelector('.horizontal-line');
+            const verticalLine = document.querySelector('.vertical-line');
+            const centerPoint = document.querySelector('.center-point');
+            const posXElement = document.getElementById('posX');
+            const posYElement = document.getElementById('posY');
+            const resetBtn = document.querySelector('.reset-btn');
+            const colorBtns = document.querySelectorAll('.color-btn');
+
+            // 初始化位置（屏幕角落）
+            crosshairContainer.style.left = '10%';
+            crosshairContainer.style.top = '10%';
+            updatePosition();
+
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            // 开始拖拽
+            crosshairContainer.addEventListener('mousedown', function (e) {
+                isDragging = true;
+                document.body.classList.add('dragging');
+
+                // 计算鼠标相对于元素内部的偏移
+                const rect = crosshairContainer.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+
+                e.preventDefault();
+            });
+
+            // 拖拽中
+            document.addEventListener('mousemove', function (e) {
+                if (!isDragging) return;
+
+                // 计算新位置
+                const x = e.clientX - offsetX;
+                const y = e.clientY - offsetY;
+
+                // 更新位置
+                crosshairContainer.style.left = x + 'px';
+                crosshairContainer.style.top = y + 'px';
+
+                updatePosition();
+            });
+
+            // 结束拖拽
+            document.addEventListener('mouseup', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.classList.remove('dragging');
+                }
+            });
+
+            // 重置位置
+            resetBtn.addEventListener('click', function () {
+                crosshairContainer.style.left = '50%';
+                crosshairContainer.style.top = '50%';
+                updatePosition();
+            });
+
+            // 颜色选择
+            colorBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // 移除所有按钮的active类
+                    colorBtns.forEach(b => b.classList.remove('active'));
+                    // 添加当前按钮的active类
+                    this.classList.add('active');
+
+                    // 获取颜色
+                    const color = this.getAttribute('data-color');
+
+                    // 更新线条颜色
+                    horizontalLine.style.backgroundColor = color;
+                    verticalLine.style.backgroundColor = color;
+
+                    // 更新中心点边框
+                    centerPoint.style.borderColor = color;
+
+                    // 更新阴影
+                    horizontalLine.style.boxShadow = `0 0 10px ${color}80`;
+                    verticalLine.style.boxShadow = `0 0 10px ${color}80`;
+                    centerPoint.style.boxShadow = `0 0 10px ${color}80`;
+                });
+            });
+
+            // 更新位置信息
+            function updatePosition() {
+                const rect = crosshairContainer.getBoundingClientRect();
+                const centerX = Math.round(rect.left + rect.width / 2);
+                const centerY = Math.round(rect.top + rect.height / 2);
+
+                posXElement.textContent = centerX;
+                posYElement.textContent = centerY;
+            }
+        });
+
+        // Vanilla JS Liquid Glass Effect
+
+        (function () {
+            'use strict';
+
+            // Check if liquid glass already exists and destroy it
+            if (window.liquidGlass) {
+                window.liquidGlass.destroy();
+                console.log('Previous liquid glass effect removed.');
+            }
+
+            // Utility functions
+            function smoothStep(a, b, t) {
+                t = Math.max(0, Math.min(1, (t - a) / (b - a)));
+                return t * t * (3 - 2 * t);
+            }
+
+            function length(x, y) {
+                return Math.sqrt(x * x + y * y);
+            }
+
+            function roundedRectSDF(x, y, width, height, radius) {
+                const qx = Math.abs(x) - width + radius;
+                const qy = Math.abs(y) - height + radius;
+                return Math.min(Math.max(qx, qy), 0) + length(Math.max(qx, 0), Math.max(qy, 0)) - radius;
+            }
+
+            function texture(x, y) {
+                return { type: 't', x, y };
+            }
+
+            // Generate unique ID
+            function generateId() {
+                return 'liquid-glass-' + Math.random().toString(36).substr(2, 9);
+            }
+
+            // Main Shader class
+            class Shader {
+                constructor(options = {}) {
+                    this.width = options.width || 100;
+                    this.height = options.height || 100;
+                    this.fragment = options.fragment || ((uv) => texture(uv.x, uv.y));
+                    this.canvasDPI = 1;
+                    this.id = generateId();
+                    this.offset = 0; // Viewport boundary offset
+
+                    this.mouse = { x: 0, y: 0 };
+                    this.mouseUsed = false;
+
+                    this.createElement();
+                    this.setupEventListeners();
+                    this.updateShader();
+                }
+
+                createElement() {
+                    // Create container
+                    this.container = document.createElement('div');
+                    this.container.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(50%, -10%);
+        width: ${this.width}px;
+        height: ${this.height}px;
+        overflow: hidden;
+        border-radius: 150px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25), 0 -10px 25px inset rgba(0, 0, 0, 0.15);
+        cursor: grab;
+        backdrop-filter: url(#${this.id}_filter) blur(0.25px) contrast(1.2) brightness(1.05) saturate(1.1);
+        z-index: 9999;
+        pointer-events: auto;
+      `;
+
+                    // Create SVG filter
+                    this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    this.svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    this.svg.setAttribute('width', '0');
+                    this.svg.setAttribute('height', '0');
+                    this.svg.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9998;
+      `;
+
+                    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+                    filter.setAttribute('id', `${this.id}_filter`);
+                    filter.setAttribute('filterUnits', 'userSpaceOnUse');
+                    filter.setAttribute('colorInterpolationFilters', 'sRGB');
+                    filter.setAttribute('x', '0');
+                    filter.setAttribute('y', '0');
+                    filter.setAttribute('width', this.width.toString());
+                    filter.setAttribute('height', this.height.toString());
+
+                    this.feImage = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
+                    this.feImage.setAttribute('id', `${this.id}_map`);
+                    this.feImage.setAttribute('width', this.width.toString());
+                    this.feImage.setAttribute('height', this.height.toString());
+
+                    this.feDisplacementMap = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
+                    this.feDisplacementMap.setAttribute('in', 'SourceGraphic');
+                    this.feDisplacementMap.setAttribute('in2', `${this.id}_map`);
+                    this.feDisplacementMap.setAttribute('xChannelSelector', 'R');
+                    this.feDisplacementMap.setAttribute('yChannelSelector', 'G');
+
+                    filter.appendChild(this.feImage);
+                    filter.appendChild(this.feDisplacementMap);
+                    defs.appendChild(filter);
+                    this.svg.appendChild(defs);
+
+                    // Create canvas for displacement map (hidden)
+                    this.canvas = document.createElement('canvas');
+                    this.canvas.width = this.width * this.canvasDPI;
+                    this.canvas.height = this.height * this.canvasDPI;
+                    this.canvas.style.display = 'none';
+
+                    this.context = this.canvas.getContext('2d');
+                }
+
+                constrainPosition(x, y) {
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+
+                    // Calculate boundaries with offset
+                    const minX = this.offset;
+                    const maxX = viewportWidth - this.width - this.offset;
+                    const minY = this.offset;
+                    const maxY = viewportHeight - this.height - this.offset;
+
+                    // Constrain position
+                    const constrainedX = Math.max(minX, Math.min(maxX, x));
+                    const constrainedY = Math.max(minY, Math.min(maxY, y));
+
+                    return { x: constrainedX, y: constrainedY };
+                }
+
+                setupEventListeners() {
+                    let isDragging = false;
+                    let startX, startY, initialX, initialY;
+
+                    this.container.addEventListener('mousedown', (e) => {
+                        isDragging = true;
+                        this.container.style.cursor = 'grabbing';
+                        startX = e.clientX;
+                        startY = e.clientY;
+                        const rect = this.container.getBoundingClientRect();
+                        initialX = rect.left;
+                        initialY = rect.top;
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener('mousemove', (e) => {
+                        if (isDragging) {
+                            const deltaX = e.clientX - startX;
+                            const deltaY = e.clientY - startY;
+
+                            // Calculate new position
+                            const newX = initialX + deltaX;
+                            const newY = initialY + deltaY;
+
+                            // Constrain position within viewport bounds
+                            const constrained = this.constrainPosition(newX, newY);
+
+                            this.container.style.left = constrained.x + 'px';
+                            this.container.style.top = constrained.y + 'px';
+                            this.container.style.transform = 'none';
+                        }
+
+                        // Update mouse position for shader
+                        const rect = this.container.getBoundingClientRect();
+                        this.mouse.x = (e.clientX - rect.left) / rect.width;
+                        this.mouse.y = (e.clientY - rect.top) / rect.height;
+
+                        if (this.mouseUsed) {
+                            this.updateShader();
+                        }
+                    });
+
+                    document.addEventListener('mouseup', () => {
+                        isDragging = false;
+                        this.container.style.cursor = 'grab';
+                    });
+
+                    // Handle window resize to maintain constraints
+                    window.addEventListener('resize', () => {
+                        const rect = this.container.getBoundingClientRect();
+                        const constrained = this.constrainPosition(rect.left, rect.top);
+
+                        if (rect.left !== constrained.x || rect.top !== constrained.y) {
+                            this.container.style.left = constrained.x + 'px';
+                            this.container.style.top = constrained.y + 'px';
+                            this.container.style.transform = 'none';
+                        }
+                    });
+                }
+
+                updateShader() {
+                    const mouseProxy = new Proxy(this.mouse, {
+                        get: (target, prop) => {
+                            this.mouseUsed = true;
+                            return target[prop];
+                        }
+                    });
+
+                    this.mouseUsed = false;
+
+                    const w = this.width * this.canvasDPI;
+                    const h = this.height * this.canvasDPI;
+                    const data = new Uint8ClampedArray(w * h * 4);
+
+                    let maxScale = 0;
+                    const rawValues = [];
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const x = (i / 4) % w;
+                        const y = Math.floor(i / 4 / w);
+                        const pos = this.fragment(
+                            { x: x / w, y: y / h },
+                            mouseProxy
+                        );
+                        const dx = pos.x * w - x;
+                        const dy = pos.y * h - y;
+                        maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
+                        rawValues.push(dx, dy);
+                    }
+
+                    maxScale *= 0.5;
+
+                    let index = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = rawValues[index++] / maxScale + 0.5;
+                        const g = rawValues[index++] / maxScale + 0.5;
+                        data[i] = r * 255;
+                        data[i + 1] = g * 255;
+                        data[i + 2] = 0;
+                        data[i + 3] = 255;
+                    }
+
+                    this.context.putImageData(new ImageData(data, w, h), 0, 0);
+                    this.feImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', this.canvas.toDataURL());
+                    this.feDisplacementMap.setAttribute('scale', (maxScale / this.canvasDPI).toString());
+                }
+
+                appendTo(parent) {
+                    parent.appendChild(this.svg);
+                    parent.appendChild(this.container);
+                }
+
+                destroy() {
+                    this.svg.remove();
+                    this.container.remove();
+                    this.canvas.remove();
+                }
+            }
+
+            // Create the liquid glass effect
+            function createLiquidGlass() {
+                // Create shader
+                const shader = new Shader({
+                    width: 300,
+                    height: 300,
+                    fragment: (uv, mouse) => {
+                        const ix = uv.x - 0.5;
+                        const iy = uv.y - 0.5;
+                        const distanceToEdge = roundedRectSDF(
+                            ix,
+                            iy,
+                            0.3,
+                            0.2,
+                            0.6
+                        );
+                        const displacement = smoothStep(1.0, 0, distanceToEdge - 0.125);
+                        const scaled = smoothStep(0, 1, displacement);
+                        return texture(ix * scaled + 0.5, iy * scaled + 0.5);
+                    }
+                });
+
+                // Add to page
+                shader.appendTo(document.body);
+
+                console.log('Liquid Glass effect created! Drag the glass around the page.');
+
+                // Return shader instance so it can be removed if needed
+                window.liquidGlass = shader;
+            }
+
+            // Initialize
+            createLiquidGlass();
+        })();
+
+        document.addEventListener('DOMContentLoaded', function () {
             // 获取DOM元素
             const imageUrlInput = document.getElementById('imageUrl');
             const scaleFactorInput = document.getElementById('scaleFactor');
@@ -386,13 +921,13 @@
             let currentSVG = null;
 
             // 更新滑块值显示
-            scaleFactorInput.addEventListener('input', function() {
+            scaleFactorInput.addEventListener('input', function () {
                 scaleValue.textContent = parseFloat(this.value).toFixed(1);
             });
 
             // 处理示例图像点击
             exampleImages.forEach(img => {
-                img.addEventListener('click', function() {
+                img.addEventListener('click', function () {
                     const url = this.getAttribute('data-url');
                     imageUrlInput.value = url;
                 });
@@ -402,13 +937,13 @@
             processBtn.addEventListener('click', processImage);
 
             // 处理下载按钮点击
-            downloadBtn.addEventListener('click', function() {
+            downloadBtn.addEventListener('click', function () {
                 if (!currentSVG) {
                     alert('请先生成SVG图像');
                     return;
                 }
 
-                const blob = new Blob([currentSVG], {type: 'image/svg+xml'});
+                const blob = new Blob([currentSVG], { type: 'image/svg+xml' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -446,7 +981,7 @@
                 img.crossOrigin = 'Anonymous';
                 img.src = imageUrl;
 
-                img.onload = function() {
+                img.onload = function () {
                     // 检查图像尺寸
                     const isLargeImage = img.width > 128 || img.height > 128;
 
@@ -469,13 +1004,13 @@
                     let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${img.width * scale}" height="${img.height * scale}" viewBox="0 0 ${img.width} ${img.height}">\n`;
 
                     function rgbToHex(r, g, b) {
-                    // 确保输入为整数 (0-255)
-                    const toHex = (value) => {
-                    const hex = Math.max(0, Math.min(255, value)).toString(16);
-                    return hex.length === 1 ? '0' + hex : hex; // 补零
-                    };
-                    return '#' + toHex(r) + toHex(g) + toHex(b);
-                }
+                        // 确保输入为整数 (0-255)
+                        const toHex = (value) => {
+                            const hex = Math.max(0, Math.min(255, value)).toString(16);
+                            return hex.length === 1 ? '0' + hex : hex; // 补零
+                        };
+                        return '#' + toHex(r) + toHex(g) + toHex(b);
+                    }
 
                     // 遍历所有像素
                     for (let y = 0; y < img.height; y++) {
@@ -489,7 +1024,7 @@
                             // 如果像素是透明的，跳过
                             if (a === 0) continue;
 
-                            const rgbhex = rgbToHex(r,g,b)
+                            const rgbhex = rgbToHex(r, g, b)
 
                             // 创建矩形元素
                             svg += `  <rect x="${x}" y="${y}" width="1" height="1" style="fill:${rgbhex};fill-opacity:${a}" />\n`;
@@ -513,11 +1048,12 @@
                     }
                 };
 
-                img.onerror = function() {
+                img.onerror = function () {
                     previewMessage.innerHTML = '<i>❌</i><p>无法加载图像，请检查URL是否正确</p>';
                 };
             }
         });
     </script>
 </body>
+
 </html>
